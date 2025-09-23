@@ -66,6 +66,16 @@ jobs:
         # Use a very short build dir to minimize path length (especially on Windows)
         echo "build-output-dir=${{ runner.temp }}/b" >> "$GITHUB_OUTPUT"
 
+    - name: Debug Qt installation
+      shell: bash
+      run: |
+        echo "Qt5_Dir environment variable: $Qt5_Dir"
+        echo "QT_ROOT_DIR environment variable: $QT_ROOT_DIR"
+        echo "Contents of Qt directory:"
+        ls -la "${{ runner.temp }}/qt" || echo "Qt directory not found"
+        echo "Looking for Qt5Config.cmake files:"
+        find "${{ runner.temp }}/qt" -name "Qt5Config.cmake" 2>/dev/null || echo "No Qt5Config.cmake found"
+
     - name: Configure CMake
       # Configure CMake using a short build directory and enable path hashing to avoid long object file paths.
       run: >
@@ -77,6 +87,7 @@ jobs:
         -DCMAKE_OBJECT_PATH_MAX=240
         -DCMAKE_INSTALL_PREFIX="${{ runner.temp }}/i"
         -DQt5_DIR="${{ env.Qt5_Dir }}"
+        -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=TRUE
         -S "${{ github.workspace }}"
 
     - name: Build
