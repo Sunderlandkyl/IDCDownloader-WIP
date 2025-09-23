@@ -49,12 +49,32 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install Qt 5.15.2
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '5.15.2'
+        host: ${{ runner.os }}
+        target: desktop
+        arch: ${{ matrix.os == 'windows-latest' && 'win64_msvc2019_64' || matrix.os == 'macos-latest' && 'clang_64' || 'gcc_64' }}
+        dir: '${{ runner.temp }}/qt'
+        setup-python: 'false'
+
     - name: Set reusable strings
       id: strings
       shell: bash
       run: |
         # Use a very short build dir to minimize path length (especially on Windows)
         echo "build-output-dir=${{ runner.temp }}/b" >> "$GITHUB_OUTPUT"
+
+    - name: Debug Qt installation
+      shell: bash
+      run: |
+        echo "Qt5_Dir environment variable: $Qt5_Dir"
+        echo "QT_ROOT_DIR environment variable: $QT_ROOT_DIR"
+        echo "Contents of Qt directory:"
+        ls -la "${{ runner.temp }}/qt" || echo "Qt directory not found"
+        echo "Looking for Qt5Config.cmake files:"
+        find "${{ runner.temp }}/qt" -name "Qt5Config.cmake" 2>/dev/null || echo "No Qt5Config.cmake found"
 
     - name: Configure CMake
       # Configure CMake using a short build directory and enable path hashing to avoid long object file paths.
@@ -66,6 +86,8 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_OBJECT_PATH_MAX=240
         -DCMAKE_INSTALL_PREFIX="${{ runner.temp }}/i"
+        -DQt5_DIR="${{ env.Qt5_Dir }}"
+        -DSlicer_SKIP_ROOT_DIR_MAX_LENGTH_CHECK:BOOL=TRUE
         -S "${{ github.workspace }}"
 
     - name: Build
