@@ -65,7 +65,7 @@ jobs:
     - name: Debug Qt installation
       shell: bash
       run: |
-        echo "QT_DIR environment variable: $QT_DIR"
+        echo "Qt5_DIR environment variable: $Qt5_DIR"
         echo "QT_ROOT_DIR environment variable: $QT_ROOT_DIR"
         echo "Contents of Qt directory:"
         ls -la "${{ runner.temp }}/qt" || echo "Qt directory not found"
@@ -82,7 +82,7 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_OBJECT_PATH_MAX=240
         -DCMAKE_INSTALL_PREFIX="${{ runner.temp }}/i"
-        -DQt5_DIR="${{ env.QT_DIR }}"
+        -DQt5_DIR="${{ env.Qt5_DIR }}"
         -S "${{ github.workspace }}"
 
     - name: Build
