@@ -55,7 +55,7 @@ jobs:
         version: '5.15.2'
         host: ${{ runner.os }}
         target: desktop
-        arch: ${{ matrix.os == 'windows-latest' && 'win64_msvc2019_64' || (matrix.os == 'macos-latest' && 'clang_64' || 'gcc_64') }}
+        arch: ${{ matrix.os == 'windows-latest' && 'win64_msvc2019_64' || matrix.os == 'macos-latest' && 'clang_64' || 'gcc_64' }}
         dir: '${{ runner.temp }}/qt'
         setup-python: 'false'
 
