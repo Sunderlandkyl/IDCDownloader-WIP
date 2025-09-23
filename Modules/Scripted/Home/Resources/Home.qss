@@ -1,0 +1,58 @@
+QWidget
+{
+    background-color: #F8F8F8;
+    color: #333333;
+    font-size: 12px;
+}
+QAbstractButton
+{
+    background-color: #2A537A;
+    color: #FFFFFF;
+    padding: 5px 5px;
+    border-radius: 2px;
+}
+QAbstractButton:disabled
+{
+    background-color: #748FA8;
+}
+QAbstractButton:hover
+{
+    background-color: #3A6DAA;
+}
+QAbstractButton:pressed
+{
+    background-color: #1A437A;
+}
+
+ctkCollapsibleButton
+{
+    background-color: transparent;
+    color: #2A537A;
+}
+ctkCollapsibleButton::hover
+{
+    background-color: transparent;
+}
+ctkCollapsibleButton::pressed
+{
+    background-color: transparent;
+}
+
+QTableWidget
+{
+  background-color: #FFFFFF;
+}
+QTableWidget::item:alternate
+{
+background-color: #F9F9F9;
+}
+QTableWidget::item
+{
+background-color: #FFFFFF;
+color: #333333;
+}
+QTableWidget::item:selected
+{
+background-color: #B0C4DE;
+color: #000000;
+}
