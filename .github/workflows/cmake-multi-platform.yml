@@ -48,8 +48,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew uninstall cmake
-        brew install cmake@3.26
-        brew link --force cmake@3.26
+        brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/b4e46db74e74a8c1650b38b1da222284ce1ec5ce/Formula/c/cmake.rb
 
     - name: Install Qt 5.15.2
       uses: jurplel/install-qt-action@v4
