@@ -51,6 +51,25 @@ jobs:
         modules: 'qtwebengine'
         dir: '${{ runner.temp }}/qt'
 
+    - name: Install NSIS (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        # Download and install NSIS
+        Write-Host "Downloading NSIS installer..."
+        $url = "https://sourceforge.net/projects/nsis/files/NSIS%203/3.09/nsis-3.09-setup.exe/download"
+        Invoke-WebRequest -Uri $url -OutFile "nsis-setup.exe"
+        Write-Host "Installing NSIS..."
+        Start-Process -FilePath ".\nsis-setup.exe" -ArgumentList "/S" -Wait
+        $nsisPath = "${env:ProgramFiles}\NSIS"
+        if (Test-Path $nsisPath) {
+          Write-Host "NSIS installed successfully at $nsisPath"
+          echo "$nsisPath" >> $env:GITHUB_PATH
+          echo "$nsisPath\Bin" >> $env:GITHUB_PATH
+        } else {
+          Write-Host "NSIS installation may have failed"
+        }
+      shell: pwsh
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -78,3 +97,64 @@ jobs:
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
+
+    - name: Package
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      run: |
+        # Build the PACKAGE target to create installer
+        # On Slicer-based builds, this is typically in the Slicer-build subdirectory
+        if [ -d "Slicer-build" ]; then
+          cd Slicer-build
+          cmake --build . --config ${{ matrix.build_type }} --target PACKAGE
+        else
+          # Fallback: try building PACKAGE target from main build directory
+          cmake --build . --config ${{ matrix.build_type }} --target PACKAGE
+        fi
+      shell: bash
+
+    - name: Find Package Files
+      id: package-files
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      run: |
+        # Find the generated package files
+        echo "Searching for package files in $(pwd)..."
+        echo "Directory contents:"
+        find . -maxdepth 3 -type f -name "*" | head -20
+        
+        PACKAGE_FILES=""
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          # Look for .exe installer files
+          PACKAGE_FILES=$(find . -name "*.exe" -type f 2>/dev/null | grep -v "/CMake" | head -5 || true)
+          EXTENSION="exe"
+        elif [ "${{ matrix.os }}" == "macos-latest" ]; then
+          # Look for .dmg files
+          PACKAGE_FILES=$(find . -name "*.dmg" -type f 2>/dev/null | head -5 || true)
+          EXTENSION="dmg"
+        else
+          # Linux - look for .deb, .rpm, .tar.gz files  
+          PACKAGE_FILES=$(find . \( -name "*.deb" -o -name "*.rpm" -o -name "*.tar.gz" \) -type f 2>/dev/null | head -5 || true)
+          EXTENSION="deb-rpm-tgz"
+        fi
+        
+        echo "Found package files:"
+        if [ -n "$PACKAGE_FILES" ]; then
+          echo "$PACKAGE_FILES"
+          # Convert to space-separated list for the action
+          PACKAGE_LIST=$(echo "$PACKAGE_FILES" | tr '\n' ' ' | xargs)
+          echo "package-files=$PACKAGE_LIST" >> $GITHUB_OUTPUT
+          echo "has-packages=true" >> $GITHUB_OUTPUT
+        else
+          echo "No package files found"
+          echo "package-files=" >> $GITHUB_OUTPUT  
+          echo "has-packages=false" >> $GITHUB_OUTPUT
+        fi
+        echo "extension=$EXTENSION" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Upload Package Artifacts
+      if: steps.package-files.outputs.has-packages == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: IDCDownloader-${{ matrix.os }}-${{ matrix.build_type }}-installer
+        path: ${{ steps.package-files.outputs.package-files }}
+        retention-days: 30
