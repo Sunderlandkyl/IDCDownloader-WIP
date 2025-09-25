@@ -78,3 +78,13 @@ jobs:
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
+
+    - name: Package
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      run: cmake --build "${{ steps.strings.outputs.build-output-dir }}/Slicer-build" --config ${{ matrix.build_type }} --target package
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: cmake-multi-platform-${{ matrix.os }}-${{ matrix.build_type }}
+        path: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-.*.exe
