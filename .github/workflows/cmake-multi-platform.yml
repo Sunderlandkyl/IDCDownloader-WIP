@@ -44,11 +44,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: macOS setup CMake
+    - name: Set up CMake
       if: runner.os == 'macOS'
-      run: |
-        brew uninstall cmake
-        brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/b4e46db74e74a8c1650b38b1da222284ce1ec5ce/Formula/c/cmake.rb
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.27.7'
 
     - name: Install Qt 5.15.2
       uses: jurplel/install-qt-action@v4
