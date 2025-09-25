@@ -1,0 +1,44 @@
+# Build directories
+build/
+b/
+*-build/
+*-superbuild/
+Slicer-build/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.vcxproj*
+*.sln
+
+# Packaged installers and artifacts
+*.exe
+*.dmg
+*.deb
+*.rpm
+*.tar.gz
+*.msi
+
+# Temporary files
+/tmp/
+
+# IDE files
+.vscode/
+.idea/
+*.user
+
+# macOS
+.DS_Store
+
+# Qt generated files
+*.pro.user*
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
