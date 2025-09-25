@@ -44,6 +44,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: macOS setup CMake
+      if: runner.os == 'macOS'
+      run: |
+        brew uninstall cmake
+        brew install cmake@3.26
+        brew link --force cmake@3.26
+
     - name: Install Qt 5.15.2
       uses: jurplel/install-qt-action@v4
       with:
