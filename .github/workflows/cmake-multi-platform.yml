@@ -22,7 +22,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-2022, macos-latest-large]
         build_type: [Release]
-        c_compiler: [gcc, cl, clang]
+        c_compiler: [gcc, cl]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -31,21 +31,15 @@ jobs:
             c_compiler: gcc
             cpp_compiler: g++
           - os: macos-latest-large
-            c_compiler: clang
-            cpp_compiler: clang
+            c_compiler: gcc
+            cpp_compiler: c++
         exclude:
           - os: windows-2022
             c_compiler: gcc
-          - os: windows-2022
-            c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: clang
           - os: macos-latest-large
             c_compiler: cl
-          - os: macos-latest-large
-            c_compiler: gcc
 
     steps:
     - uses: actions/checkout@v4
