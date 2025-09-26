@@ -50,12 +50,32 @@ jobs:
       with:
         cmake-version: '3.27.7'
 
-    - name: Install Qt 5.15.2
+    # ----- Qt installation -----
+    # Windows/Linux: keep install-qt-action
+    - name: Install Qt 5.15.2 (Windows/Linux)
+      if: runner.os != 'macOS'
       uses: jurplel/install-qt-action@v4
       with:
         version: '5.15.2'
         modules: 'qtwebengine'
         dir: '${{ runner.temp }}/qt'
+        # Optionally add tools if you need them:
+        # tools: 'tools_qttools'
+    # macOS: use Homebrew Qt (has OpenSSL/DTLS)
+    - name: Install Qt 5 (macOS via Homebrew)
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        brew update
+        brew install qt@5 openssl@3
+        # Put Qt tools on PATH
+        echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
+        # Help CMake find Qt5
+        echo "CMAKE_PREFIX_PATH=$(brew --prefix qt@5)" >> "$GITHUB_ENV"
+        echo "Qt5_DIR=$(brew --prefix qt@5)/lib/cmake/Qt5" >> "$GITHUB_ENV"
+        # Optional: show what we have
+        qmake -v || true
+        (command -v qtpaths && qtpaths --qt-version) || true
 
     - name: Set reusable strings
       id: strings
@@ -64,8 +84,8 @@ jobs:
         # Use a very short build dir to minimize path length (especially on Windows)
         echo "build-output-dir=${{ runner.temp }}/b" >> "$GITHUB_OUTPUT"
 
+    # ----- Configure -----
     - name: Configure CMake
-      # Configure CMake using a short build directory and enable path hashing to avoid long object file paths.
       run: >
         cmake
         -B "${{ steps.strings.outputs.build-output-dir }}"
