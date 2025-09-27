@@ -113,5 +113,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: cmake-multi-platform-${{ matrix.os }}-${{ matrix.build_type }}
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-.*
+        path: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
