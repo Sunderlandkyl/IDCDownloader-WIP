@@ -32,7 +32,7 @@ jobs:
             cpp_compiler: g++
           - os: macos-latest-large
             c_compiler: gcc
-            cpp_compiler: c++
+            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
