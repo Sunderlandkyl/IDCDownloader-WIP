@@ -62,10 +62,13 @@ jobs:
         curl -L https://github.com/conda-forge/miniforge/releases/download/25.3.1-0/Miniforge3-MacOSX-x86_64.sh -o miniforge.sh
         bash miniforge.sh -b -p $HOME/miniforge
         echo "$HOME/miniforge/condabin" >> $GITHUB_PATH
+
         source $HOME/miniforge/etc/profile.d/conda.sh
-        conda create -y -n qt5 -c conda-forge qt-main=5.15.* openssl
+        conda create -y -n qt5 -c conda-forge qt-main=5.15.* qt-webengine=5.15.* openssl
         echo "CMAKE_PREFIX_PATH=$HOME/miniforge/envs/qt5" >> $GITHUB_ENV
         echo "Qt5_DIR=$HOME/miniforge/envs/qt5/lib/cmake/Qt5" >> $GITHUB_ENV
+        echo "Qt5WebEngineWidgets_DIR=$HOME/miniforge/envs/qt5/lib/cmake/Qt5WebEngineWidgets" >> $GITHUB_ENV
+
         conda list -n qt5
         conda activate qt5
 
