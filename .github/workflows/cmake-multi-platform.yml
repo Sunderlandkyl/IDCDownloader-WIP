@@ -59,28 +59,17 @@ jobs:
     - name: Install Qt 5.15.2 (macOS)
       if: runner.os == 'macOS'
       run: |
-        curl -L https://github.com/conda-forge/miniforge/releases/download/25.3.1-0/Miniforge3-MacOSX-x86_64.sh -o miniforge.sh
-        bash miniforge.sh -b -p $HOME/miniforge
-        echo "$HOME/miniforge/condabin" >> $GITHUB_PATH
+        curl -s https://raw.githubusercontent.com/jcfr/qt-easy-build/5.15.2/Build-qt.sh -o Build-qt.sh && chmod u+x Build-qt.sh
+        ./Build-qt.sh -j 4
 
-        source $HOME/miniforge/etc/profile.d/conda.sh
-        conda create -y -n qt5 -c conda-forge qt-main=5.15.* qt-webengine=5.15.* openssl
-        echo "CMAKE_PREFIX_PATH=$HOME/miniforge/envs/qt5" >> $GITHUB_ENV
-        echo "Qt5_DIR=$HOME/miniforge/envs/qt5/lib/cmake/Qt5" >> $GITHUB_ENV
-        echo "Qt5WebEngineWidgets_DIR=$HOME/miniforge/envs/qt5/lib/cmake/Qt5WebEngineWidgets" >> $GITHUB_ENV
+        QT_INSTALL_PREFIX=$(pwd)/qt-everywhere-opensource-src-5.15.2-install
+        echo "CMAKE_PREFIX_PATH=$QT_INSTALL_PREFIX:/opt/homebrew" >> $GITHUB_ENV
+        echo "Qt5_DIR=$QT_INSTALL_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
+        echo "Qt5WebEngineWidgets_DIR=$QT_INSTALL_PREFIX/lib/cmake/Qt5WebEngineWidgets" >> $GITHUB_ENV
+        echo "PATH=$QT_INSTALL_PREFIX/bin:/opt/homebrew/bin:$PATH" >> $GITHUB_ENV
 
-        conda list -n qt5
-        conda activate qt5
-
-    # ----- macOS dependencies -----
-    - name: Install macOS dependencies
-      if: runner.os == 'macOS'
-      run: |
-        # Install libiconv to fix linking issues
-        brew install libiconv pkg-config
-        echo "LDFLAGS=-L/opt/homebrew/lib" >> $GITHUB_ENV
-        echo "CPPFLAGS=-I/opt/homebrew/include" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
+        ls -la $QT_INSTALL_PREFIX/lib/cmake/Qt5/
+        echo "Qt5 installation complete with qt-easy-build"
 
     # ----- String setup -----
     - name: Set reusable strings
