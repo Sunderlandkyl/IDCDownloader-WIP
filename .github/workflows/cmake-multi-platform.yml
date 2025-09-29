@@ -67,7 +67,7 @@ jobs:
     - name: Install Qt 5.15.2 (macOS)
       if: runner.os == 'macOS'
       run: |
-        curl -s https://raw.githubusercontent.com/jcfr/qt-easy-build/5.15.2/Build-qt.sh -o Build-qt.sh && chmod u+x Build-qt.sh
+        curl -s https://raw.githubusercontent.com/commontk/qt-easy-build/refs/heads/5.15.8/Build-qt.sh -o Build-qt.sh && chmod u+x Build-qt.sh
         echo y | ./Build-qt.sh -j 4 -d 15.5 -s macosx15.5
 
         QT_INSTALL_PREFIX=$(pwd)/qt-everywhere-opensource-src-5.15.2-install
