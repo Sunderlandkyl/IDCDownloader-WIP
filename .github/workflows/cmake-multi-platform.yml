@@ -52,20 +52,16 @@ jobs:
         # Optionally add tools if you need them:
         # tools: 'tools_qttools'
 
-    - name: Install Mambaforge (conda-forge)
+    - name: Install Qt 5.15.2 (macOS)
       if: runner.os == 'macOS'
       run: |
-        curl -L https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-MacOSX-x86_64.sh -o mambaforge.sh
-        bash mambaforge.sh -b -p $HOME/mambaforge
-        echo "$HOME/mambaforge/condabin" >> $GITHUB_PATH
-
-    - name: Create Qt5 env (Qt 5.15 + OpenSSL)
-      if: runner.os == 'macOS'
-      run: |
-        source $HOME/mambaforge/etc/profile.d/conda.sh
-        mamba create -y -n qt5 qt-main=5.15.* openssl
-        echo "CMAKE_PREFIX_PATH=$HOME/mambaforge/envs/qt5" >> $GITHUB_ENV
-        echo "Qt5_DIR=$HOME/mambaforge/envs/qt5/lib/cmake/Qt5" >> $GITHUB_ENV
+        curl -L https://github.com/conda-forge/miniforge/releases/download/25.3.1-0/Miniforge3-MacOSX-x86_64.sh -o miniforge.sh
+        bash miniforge.sh -b -p $HOME/miniforge
+        echo "$HOME/miniforge/condabin" >> $GITHUB_PATH
+        source $HOME/miniforge/etc/profile.d/conda.sh
+        conda create -y -n qt5 -c conda-forge qt-main=5.15.* openssl
+        echo "CMAKE_PREFIX_PATH=$HOME/miniforge/envs/qt5" >> $GITHUB_ENV
+        echo "Qt5_DIR=$HOME/miniforge/envs/qt5/lib/cmake/Qt5" >> $GITHUB_ENV
         conda list -n qt5
         conda activate qt5
 
