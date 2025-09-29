@@ -60,7 +60,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         curl -s https://raw.githubusercontent.com/jcfr/qt-easy-build/5.15.2/Build-qt.sh -o Build-qt.sh && chmod u+x Build-qt.sh
-        echo y | ./Build-qt.sh -j 4 -d 15.0 -s macosx15.0
+        echo y | ./Build-qt.sh -j 4 -d 14.0 -s macosx14.0
 
         QT_INSTALL_PREFIX=$(pwd)/qt-everywhere-opensource-src-5.15.2-install
         echo "CMAKE_PREFIX_PATH=$QT_INSTALL_PREFIX:/opt/homebrew" >> $GITHUB_ENV
