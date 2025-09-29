@@ -72,6 +72,16 @@ jobs:
         conda list -n qt5
         conda activate qt5
 
+    # ----- macOS dependencies -----
+    - name: Install macOS dependencies
+      if: runner.os == 'macOS'
+      run: |
+        # Install libiconv to fix linking issues
+        brew install libiconv pkg-config
+        echo "LDFLAGS=-L/opt/homebrew/lib" >> $GITHUB_ENV
+        echo "CPPFLAGS=-I/opt/homebrew/include" >> $GITHUB_ENV
+        echo "PKG_CONFIG_PATH=/opt/homebrew/lib/pkgconfig" >> $GITHUB_ENV
+
     # ----- String setup -----
     - name: Set reusable strings
       id: strings
