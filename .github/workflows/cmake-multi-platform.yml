@@ -65,6 +65,14 @@ jobs:
         conda list -n qt5
         conda activate qt5
 
+    # ----- String setup -----
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        # Use a very short build dir to minimize path length (especially on Windows)
+        echo "build-output-dir=${{ runner.temp }}/b" >> "$GITHUB_OUTPUT"
+
     # ----- Configure -----
     - name: Configure CMake
       run: >
