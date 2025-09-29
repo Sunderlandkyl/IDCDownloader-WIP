@@ -56,6 +56,14 @@ jobs:
         # Optionally add tools if you need them:
         # tools: 'tools_qttools'
 
+    - name: Show available macOS SDKs
+      if: runner.os == 'macOS'
+      run: |
+        echo "Available SDKs (xcodebuild):"
+        xcodebuild -showsdks
+        echo "Default sysroot path (xcrun):"
+        xcrun --sdk macosx --show-sdk-path
+
     - name: Install Qt 5.15.2 (macOS)
       if: runner.os == 'macOS'
       run: |
