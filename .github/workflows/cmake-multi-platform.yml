@@ -23,16 +23,6 @@ jobs:
         os: [macos-15-intel]
         build_type: [Release]
         c_compiler: [gcc, cl]
-        include:
-          - os: windows-2022
-            c_compiler: cl
-            cpp_compiler: cl
-          - os: ubuntu-latest
-            c_compiler: gcc
-            cpp_compiler: g++
-          - os: macos-15-intel
-            c_compiler: gcc
-            cpp_compiler: g++
         exclude:
           - os: windows-2022
             c_compiler: gcc
