@@ -59,6 +59,7 @@ jobs:
     - name: Install Qt 5.15.2 (macOS)
       if: runner.os == 'macOS'
       run: |
+        xcode-select --install
         curl -s https://raw.githubusercontent.com/jcfr/qt-easy-build/5.15.2/Build-qt.sh -o Build-qt.sh && chmod u+x Build-qt.sh
         echo y | ./Build-qt.sh -j 4
 
