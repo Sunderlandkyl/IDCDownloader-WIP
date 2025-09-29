@@ -20,7 +20,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest, windows-2022, macos-latest-large]
+        os: [macos-15-intel]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
@@ -30,7 +30,7 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-          - os: macos-latest-large
+          - os: macos-15-intel
             c_compiler: gcc
             cpp_compiler: g++
         exclude:
@@ -38,7 +38,7 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          - os: macos-latest-large
+          - os: macos-15-intel
             c_compiler: cl
 
     steps:
@@ -61,28 +61,23 @@ jobs:
         dir: '${{ runner.temp }}/qt'
         # Optionally add tools if you need them:
         # tools: 'tools_qttools'
-    # macOS: use Homebrew Qt (has OpenSSL/DTLS)
-    - name: Install Qt 5 (macOS via Homebrew)
-      if: runner.os == 'macOS'
-      shell: bash
-      run: |
-        brew update
-        brew install qt@5 openssl@3
-        # Put Qt tools on PATH
-        echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
-        # Help CMake find Qt5
-        echo "CMAKE_PREFIX_PATH=$(brew --prefix qt@5)" >> "$GITHUB_ENV"
-        echo "Qt5_DIR=$(brew --prefix qt@5)/lib/cmake/Qt5" >> "$GITHUB_ENV"
-        # Optional: show what we have
-        qmake -v || true
-        (command -v qtpaths && qtpaths --qt-version) || true
 
-    - name: Set reusable strings
-      id: strings
-      shell: bash
+    - name: Install Mambaforge (conda-forge)
+      if: runner.os == 'macOS'
       run: |
-        # Use a very short build dir to minimize path length (especially on Windows)
-        echo "build-output-dir=${{ runner.temp }}/b" >> "$GITHUB_OUTPUT"
+        curl -L https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-MacOSX-x86_64.sh -o mambaforge.sh
+        bash mambaforge.sh -b -p $HOME/mambaforge
+        echo "$HOME/mambaforge/condabin" >> $GITHUB_PATH
+
+    - name: Create Qt5 env (Qt 5.15 + OpenSSL)
+      if: runner.os == 'macOS'
+      run: |
+        source $HOME/mambaforge/etc/profile.d/conda.sh
+        mamba create -y -n qt5 qt-main=5.15.* openssl
+        echo "CMAKE_PREFIX_PATH=$HOME/mambaforge/envs/qt5" >> $GITHUB_ENV
+        echo "Qt5_DIR=$HOME/mambaforge/envs/qt5/lib/cmake/Qt5" >> $GITHUB_ENV
+        conda list -n qt5
+        conda activate qt5
 
     # ----- Configure -----
     - name: Configure CMake
