@@ -64,11 +64,11 @@ jobs:
         echo "Default sysroot path (xcrun):"
         xcrun --sdk macosx --show-sdk-path
 
-    - name: Install Qt 5.15.2 (macOS)
+    - name: Install Qt 5.15.8 (macOS)
       if: runner.os == 'macOS'
       env:
         # Keep all paths short to avoid overflowing Mach-O headers
-        QT_PREFIX: ${{ runner.temp }}/qt-5152
+        QT_PREFIX: ${{ runner.temp }}/qt-5158
         # Make sure anything linked during the script gets extra header space,
         # so install_name_tool/rpath edits won't overflow later.
         LDFLAGS: -Wl,-headerpad_max_install_names
@@ -89,10 +89,7 @@ jobs:
         # -y non-interactive, -j parallel, -d/-s set the macOS target/SDK, -q sets a short install prefix
         ./Build-qt.sh -y -j 4 -d 15.5 -s macosx15.5 -q "$QT_PREFIX"
 
-        echo "CMAKE_PREFIX_PATH=$QT_PREFIX:/opt/homebrew" >> $GITHUB_ENV
         echo "Qt5_DIR=$QT_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
-        echo "Qt5WebEngineWidgets_DIR=$QT_PREFIX/lib/cmake/Qt5WebEngineWidgets" >> $GITHUB_ENV
-        echo "PATH=$QT_PREFIX/bin:/opt/homebrew/bin:$PATH" >> $GITHUB_ENV
 
         ls -la "$QT_PREFIX/lib/cmake/Qt5/"
         echo "Qt5 installation complete with qt-easy-build"
