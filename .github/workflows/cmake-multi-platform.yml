@@ -55,16 +55,6 @@ jobs:
       uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.27.7'
-    
-    - name: Create test file
-      run: echo "Testing CMake multi-platform workflow" > testfile-${{ matrix.os }}-${{ matrix.build_type }}.txt
-
-    # Upload using wildcard
-    - name: Upload Release Asset Test
-      if: startsWith(github.event_name, 'release')
-      uses: softprops/action-gh-release@v1
-      with:
-        files: testfile*
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
