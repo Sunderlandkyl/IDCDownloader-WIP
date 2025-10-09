@@ -4,6 +4,8 @@ name: CMake on multiple platforms
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -50,6 +52,15 @@ jobs:
       uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.27.7'
+    
+    - name: Create test file
+      run: echo "Testing CMake multi-platform workflow" > testfile-${{ matrix.os }}-${{ matrix.build_type }}.txt
+
+    - name: Upload Release Asset Test
+      if: startsWith(github.event_name, 'release')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: testfile.txt
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
@@ -140,3 +151,9 @@ jobs:
       with:
         name: cmake-multi-platform-${{ matrix.os }}-${{ matrix.build_type }}
         path: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
+            
+    - name: Upload Release Asset
+      if: startsWith(github.event_name, 'release')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
