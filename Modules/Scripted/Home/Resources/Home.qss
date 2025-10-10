@@ -17,11 +17,11 @@ QAbstractButton:disabled
 }
 QAbstractButton:hover
 {
-    background-color: #3A6DAA;
+    background-color: #1D3954;
 }
 QAbstractButton:pressed
 {
-    background-color: #1A437A;
+    background-color: #132638;
 }
 
 ctkCollapsibleButton
@@ -29,11 +29,11 @@ ctkCollapsibleButton
     background-color: transparent;
     color: #2A537A;
 }
-ctkCollapsibleButton::hover
+ctkCollapsibleButton:hover
 {
     background-color: transparent;
 }
-ctkCollapsibleButton::pressed
+ctkCollapsibleButton:pressed
 {
     background-color: transparent;
 }

@@ -37,7 +37,7 @@ set(Slicer_ORGANIZATION_DOMAIN "github.com")
 set(Slicer_ORGANIZATION_NAME   "Temp")
 
 # Default home and favorite modules
-set(Slicer_DEFAULT_HOME_MODULE "IDCBrowser")
+set(Slicer_DEFAULT_HOME_MODULE "Home")
 set(Slicer_DEFAULT_FAVORITE_MODULES "IDCBrowser")
 
 # Configure SuperBuild
@@ -138,8 +138,6 @@ set(Slicer_QTSCRIPTEDMODULES_DISABLED
 
 # Enable/Disable Slicer custom modules: To create a new module, use the SlicerExtensionWizard.
 set(Slicer_EXTENSION_SOURCE_DIRS
-  #${IDCDownloader_SOURCE_DIR}/Modules/CLI/MyCLIModule
-  #${IDCDownloader_SOURCE_DIR}/Modules/Loadable/MyLoadableModule
   ${IDCDownloader_SOURCE_DIR}/Modules/Scripted/Home
   )
 
