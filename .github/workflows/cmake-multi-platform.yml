@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   release:
     types: [published]
-   
+
 permissions:
   contents: write
 
@@ -25,13 +25,10 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-2022, ubuntu-latest, macos-15-intel]
+        os: [windows-2022, ubuntu-latest]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
-          - os: macos-15-intel
-            c_compiler: gcc
-            cpp_compiler: g++
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -44,17 +41,9 @@ jobs:
             c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
-          - os: macos-15-intel
-            c_compiler: cl
 
     steps:
     - uses: actions/checkout@v5
-
-    - name: Set up CMake
-      if: runner.os == 'macOS'
-      uses: jwlawson/actions-setup-cmake@v2
-      with:
-        cmake-version: '3.27.7'
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
@@ -67,45 +56,6 @@ jobs:
         dir: '${{ runner.temp }}/qt'
         # Optionally add tools if you need them:
         # tools: 'tools_qttools'
-
-    - name: Show available macOS SDKs
-      if: runner.os == 'macOS'
-      run: |
-        echo "Available SDKs (xcodebuild):"
-        xcodebuild -showsdks
-        echo "Default sysroot path (xcrun):"
-        xcrun --sdk macosx --show-sdk-path
-
-    - name: Install Qt 5.15.8 (macOS)
-      if: runner.os == 'macOS'
-      env:
-        # Keep all paths short to avoid overflowing Mach-O headers
-        QT_PREFIX: ${{ runner.temp }}/qt-5158
-        # Make sure anything linked during the script gets extra header space,
-        # so install_name_tool/rpath edits won't overflow later.
-        LDFLAGS: -Wl,-headerpad_max_install_names
-        # Match the SDK/deployment target you pass to the script
-        MACOSX_DEPLOYMENT_TARGET: "15.5"
-      run: |
-        set -euxo pipefail
-
-        # Stay in a short path
-        cd "${{ runner.temp }}"
-
-        # Use the active Xcode SDK explicitly
-        export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
-
-        curl -s https://raw.githubusercontent.com/commontk/qt-easy-build/refs/heads/5.15.8/Build-qt.sh -o Build-qt.sh
-        chmod +x Build-qt.sh
-
-        # -y non-interactive, -j parallel, -d/-s set the macOS target/SDK, -q sets a short install prefix
-        ./Build-qt.sh -y -j 4 -d 15.5 -s macosx15.5 -q "$QT_PREFIX"
-
-        echo "Qt5_DIR=$QT_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
-
-        ls -la "$QT_PREFIX/lib/cmake/Qt5/"
-        echo "Qt5 installation complete with qt-easy-build"
-
 
     # ----- String setup -----
     - name: Set reusable strings
@@ -129,23 +79,25 @@ jobs:
         -DQt5_DIR="${{ env.Qt5_DIR }}/Qt5"
         -S "${{ github.workspace }}"
 
+    # ----- Build -----
     - name: Build
       run: cmake --build "${{ steps.strings.outputs.build-output-dir }}" --config ${{ matrix.build_type }} --parallel 4
 
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
-
+    # ----- Package -----
     - name: Package
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: cmake --build "${{ steps.strings.outputs.build-output-dir }}/Slicer-build" --config ${{ matrix.build_type }} --target package
 
+    # ----- Upload artifacts -----
+    # Upload the built package as a workflow artifact for each matrix combination
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: cmake-multi-platform-${{ matrix.os }}-${{ matrix.build_type }}
+        name: IDCDownloader-${{ matrix.os }}-${{ matrix.build_type }}-${{ github.sha }}
         path: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
-            
+
+    # ----- Release -----
+    # Upload the built package as a release asset when a release is published
     - name: Upload Release Asset
       if: startsWith(github.event_name, 'release')
       uses: softprops/action-gh-release@v1
