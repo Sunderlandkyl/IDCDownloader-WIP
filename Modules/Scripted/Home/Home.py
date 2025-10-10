@@ -76,14 +76,19 @@ class HomeWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         # Apply style
         self.applyApplicationStyle()
 
+    def enter(self):
+        """Called each time the module is opened."""
+        slicer.util.moduleSelector().selectedModule = "IDCBrowser"
+
+        idcBrowserWidget = slicer.modules.idcbrowser.widgetRepresentation().self()
+        idcBrowserWidget.browserCollapsibleButton.setVisible(False)
+
     def cleanup(self):
         """Called when the application closes and the module widget is destroyed."""
         pass
 
     def setSlicerUIVisible(self, visible: bool):
         exemptToolbars = [
-            "MainToolBar",
-            "ViewToolBar",
             *self.toolbarNames,
         ]
         slicer.util.setDataProbeVisible(visible)
@@ -98,7 +103,8 @@ class HomeWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     def modifyWindowUI(self):
         """Customize the entire user interface to resemble the custom application"""
         # Custom toolbars
-        self.initializeSettingsToolBar()
+        if self.developerMode:
+          self.initializeSettingsToolBar()
 
     def insertToolBar(self, beforeToolBarName: str, name: str, title: Optional[str] = None) -> qt.QToolBar:
         """Helper method to insert a new toolbar between existing ones"""
