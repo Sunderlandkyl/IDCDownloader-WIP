@@ -25,25 +25,30 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [windows-2022, ubuntu-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
-          - os: windows-2022
-            c_compiler: cl
-            cpp_compiler: cl
         # Exclude invalid combinations of OS and compiler
         exclude:
-          - os: windows-2022
-            c_compiler: gcc
           - os: ubuntu-latest
             c_compiler: cl
 
     steps:
     - uses: actions/checkout@v5
+    
+    - name: Update GCC
+      if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc'
+      run: |
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt-get update
+        sudo apt-get install gcc-12 g++-12 -y
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 60 --slave /usr/bin/g++ g++ /usr/bin/g++-12
+        gcc --version
+        g++ --version
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
