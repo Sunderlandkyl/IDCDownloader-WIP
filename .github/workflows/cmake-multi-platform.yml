@@ -39,16 +39,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
-    
-    - name: Update GCC
-      if: matrix.os == 'ubuntu-22.04' && matrix.c_compiler == 'gcc'
-      run: |
-        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-        sudo apt-get update
-        sudo apt-get install gcc-12 g++-12 -y
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 60 --slave /usr/bin/g++ g++ /usr/bin/g++-12
-        gcc --version
-        g++ --version
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
