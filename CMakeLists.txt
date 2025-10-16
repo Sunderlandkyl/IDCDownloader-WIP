@@ -161,8 +161,8 @@ set(extension_name "SlicerIDCBrowser")
 set(${extension_name}_SOURCE_DIR "${CMAKE_BINARY_DIR}/${extension_name}")
 FetchContent_Populate(${extension_name}
   SOURCE_DIR     ${${extension_name}_SOURCE_DIR}
-  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/Sunderlandkyl/SlicerIDCBrowser.git
-  GIT_TAG        sliceridcbrowser_custom_app
+  GIT_REPOSITORY ${EP_GIT_PROTOCOL}://github.com/ImagingDataCommons/SlicerIDCBrowser.git
+  GIT_TAG        main
   GIT_PROGRESS   1
   QUIET
   )
