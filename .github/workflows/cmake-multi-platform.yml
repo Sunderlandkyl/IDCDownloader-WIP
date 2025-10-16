@@ -25,23 +25,23 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-22.04]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: gcc
             cpp_compiler: g++
         # Exclude invalid combinations of OS and compiler
         exclude:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             c_compiler: cl
 
     steps:
     - uses: actions/checkout@v5
     
     - name: Update GCC
-      if: matrix.os == 'ubuntu-latest' && matrix.c_compiler == 'gcc'
+      if: matrix.os == 'ubuntu-22.04' && matrix.c_compiler == 'gcc'
       run: |
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
         sudo apt-get update
