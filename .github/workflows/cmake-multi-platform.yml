@@ -67,7 +67,7 @@ jobs:
         # so install_name_tool/rpath edits won't overflow later.
         LDFLAGS: -Wl,-headerpad_max_install_names
         # Match the SDK/deployment target you pass to the script
-        MACOSX_DEPLOYMENT_TARGET: "15.5"
+        MACOSX_DEPLOYMENT_TARGET: "14.7"
       run: |
         set -euxo pipefail
 
@@ -82,7 +82,7 @@ jobs:
         cd qt-easy-build
 
         # -y non-interactive, -j parallel, -d/-s set the macOS target/SDK, -q sets a short install prefix
-        ./Build-qt.sh -y -j 4 -d 15.5 -s macosx15.5 -q "$QT_PREFIX"
+        ./Build-qt.sh -y -j 4 -d 14.7 -s macosx14.7 -q "$QT_PREFIX"
 
         echo "Qt5_DIR=$QT_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
 
