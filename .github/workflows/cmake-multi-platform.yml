@@ -25,16 +25,16 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [macos-15]
+        os: [macos-15-intel]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
-          - os: macos-15
+          - os: macos-15-intel
             c_compiler: gcc
             cpp_compiler: g++
         # Exclude invalid combinations of OS and compiler
         exclude:
-          - os: macos-15
+          - os: macos-15-intel
             c_compiler: cl
 
     steps:
@@ -69,11 +69,6 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
-        arch -x86_64 /bin/bash -lc '
-        uname -m
-        brew install node
-        brew install ninja
-
         set -euxo pipefail
 
         # Stay in a short path
@@ -93,7 +88,6 @@ jobs:
 
         ls -la "$QT_PREFIX/lib/cmake/Qt5/"
         echo "Qt5 installation complete with qt-easy-build"
-        '
 
     # ----- String setup -----
     - name: Set reusable strings
