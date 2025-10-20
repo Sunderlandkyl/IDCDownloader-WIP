@@ -69,6 +69,7 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "14.7"
       run: |
+        xcodebuild -showsdks
         set -euxo pipefail
 
         # Stay in a short path
