@@ -99,6 +99,6 @@ jobs:
     # Upload the built package as a release asset when a release is published
     - name: Upload Release Asset
       if: startsWith(github.event_name, 'release')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
