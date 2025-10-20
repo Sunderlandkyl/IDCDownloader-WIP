@@ -69,6 +69,10 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
+        arch -x86_64 /bin/bash
+        brew install node
+        brew install ninja
+
         set -euxo pipefail
 
         # Stay in a short path
