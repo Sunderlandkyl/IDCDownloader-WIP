@@ -69,8 +69,7 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
-        arch -x86_64 /bin/bash -lc 
-        '
+        arch -x86_64 /bin/bash -lc '
         uname -m
         brew install node
         brew install ninja
