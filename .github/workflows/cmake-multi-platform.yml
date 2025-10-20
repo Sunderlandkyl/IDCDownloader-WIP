@@ -40,9 +40,11 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     
-    - name: Check GLIBC version
-      if: matrix.os == 'ubuntu-22.04'
-      run: ldd --version
+    - name: Set up CMake
+      if: runner.os == 'macOS'
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.27.7'
 
     # ----- Qt installation -----
     # Windows/Linux: keep install-qt-action
