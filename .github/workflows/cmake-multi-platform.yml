@@ -69,6 +69,7 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
+        softwareupdate --install-rosetta
         uname -m
         arch -x86_64 /bin/bash
         uname -m
