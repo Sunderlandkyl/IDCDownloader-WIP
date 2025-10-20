@@ -25,16 +25,16 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ubuntu-22.04]
+        os: [macos-15]
         build_type: [Release]
         c_compiler: [gcc, cl]
         include:
-          - os: ubuntu-22.04
+          - os: macos-15
             c_compiler: gcc
             cpp_compiler: g++
         # Exclude invalid combinations of OS and compiler
         exclude:
-          - os: ubuntu-22.04
+          - os: macos-15
             c_compiler: cl
 
     steps:
@@ -55,6 +55,37 @@ jobs:
         dir: '${{ runner.temp }}/qt'
         # Optionally add tools if you need them:
         # tools: 'tools_qttools'
+
+    - name: Install Qt 5.15.16 (macOS)
+      if: runner.os == 'macOS'
+      env:
+        # Keep all paths short to avoid overflowing Mach-O headers
+        QT_PREFIX: ${{ runner.temp }}/qt-5158
+        # Make sure anything linked during the script gets extra header space,
+        # so install_name_tool/rpath edits won't overflow later.
+        LDFLAGS: -Wl,-headerpad_max_install_names
+        # Match the SDK/deployment target you pass to the script
+        MACOSX_DEPLOYMENT_TARGET: "15.5"
+      run: |
+        set -euxo pipefail
+
+        # Stay in a short path
+        cd "${{ runner.temp }}"
+
+        # Use the active Xcode SDK explicitly
+        export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+
+        # Clone the qt-easy-build script for Qt 5.15.16
+        git clone -b 5.15.16 https://github.com/commontk/qt-easy-build.git qt-easy-build --depth 1
+        cd qt-easy-build
+
+        # -y non-interactive, -j parallel, -d/-s set the macOS target/SDK, -q sets a short install prefix
+        ./Build-qt.sh -y -j 4 -d 15.5 -q "$QT_PREFIX"
+
+        echo "Qt5_DIR=$QT_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
+
+        ls -la "$QT_PREFIX/lib/cmake/Qt5/"
+        echo "Qt5 installation complete with qt-easy-build"
 
     # ----- String setup -----
     - name: Set reusable strings
