@@ -70,7 +70,7 @@ jobs:
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
         arch -x86_64 /bin/bash
-        echo uname -m
+        uname -m
         brew install node
         brew install ninja
 
