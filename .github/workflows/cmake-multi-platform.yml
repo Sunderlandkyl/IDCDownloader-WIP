@@ -82,7 +82,7 @@ jobs:
         cd qt-easy-build
 
         # -y non-interactive, -j parallel, -d/-s set the macOS target/SDK, -q sets a short install prefix
-        ./Build-qt.sh -y -j 4 -d 15.5 -q "$QT_PREFIX"
+        ./Build-qt.sh -y -j 4 -d 15.5 -s macosx15.5 -q "$QT_PREFIX"
 
         echo "Qt5_DIR=$QT_PREFIX/lib/cmake/Qt5" >> $GITHUB_ENV
 
