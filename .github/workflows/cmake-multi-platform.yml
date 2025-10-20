@@ -69,11 +69,8 @@ jobs:
         # Match the SDK/deployment target you pass to the script
         MACOSX_DEPLOYMENT_TARGET: "15.5"
       run: |
-        softwareupdate --install-rosetta --agree-to-license
-        uname -m
-        arch -x86_64 /bin/bash
-        uname -m
-        arch -x86_64 /bin/bash
+        arch -x86_64 /bin/bash -lc 
+        '
         uname -m
         brew install node
         brew install ninja
@@ -97,6 +94,7 @@ jobs:
 
         ls -la "$QT_PREFIX/lib/cmake/Qt5/"
         echo "Qt5 installation complete with qt-easy-build"
+        '
 
     # ----- String setup -----
     - name: Set reusable strings
