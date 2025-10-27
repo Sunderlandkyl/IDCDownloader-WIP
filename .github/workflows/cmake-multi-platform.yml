@@ -124,7 +124,7 @@ jobs:
     # ----- Upload artifacts -----
     # Upload the built package as a workflow artifact for each matrix combination
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: IDCDownloader-${{ matrix.os }}-${{ matrix.build_type }}-${{ github.sha }}
         path: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
@@ -133,6 +133,6 @@ jobs:
     # Upload the built package as a release asset when a release is published
     - name: Upload Release Asset
       if: startsWith(github.event_name, 'release')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: ${{ steps.strings.outputs.build-output-dir }}/Slicer-build/IDCDownloader-*
